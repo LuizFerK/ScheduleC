@@ -26,9 +26,14 @@ typedef struct MREC Contact;
 
 // Carrega o conteúdo da agenda para a memória
 void getContacts(Contact **head_ref) {
-  FILE *fp = fopen("contacts.dat", "r+b");
+  FILE *fp = fopen("contacts.dat", "rb+");
   Contact *prev_ctt = *head_ref;
   Contact *ctt = (Contact*)malloc(sizeof(Contact));
+
+  if (!fp) {
+    *head_ref = NULL;
+    return;
+  }
   
   fread(prev_ctt, sizeof(prev_ctt), 1, fp);
   prev_ctt->next = NULL;
@@ -48,7 +53,7 @@ void getContacts(Contact **head_ref) {
 void saveContacts(Contact *contact) {
   if (contact == NULL) return;
 
-  FILE *fp = fopen("contacts.dat", "w+b");
+  FILE *fp = fopen("contacts.dat", "wb+");
 
   fwrite(contact, sizeof(contact), 1, fp);
   
@@ -117,6 +122,8 @@ void insContact(Contact **head_ref) {
   if (*head_ref == NULL) {
     new_contact->prev = NULL;
     *head_ref = new_contact;
+
+    printf("\nSuccessfully created contact %s\n\n", new_contact->name);
     return;
   }
 
